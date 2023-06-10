@@ -1,0 +1,48 @@
+# modified from: https://github.com/bevyengine/bevy/blob/main/.github/workflows/ci.yml
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+#  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+  RUSTFLAGS: "-C debuginfo=0 -D warnings"
+
+jobs:
+  checks:
+    name: CI check (${{ matrix.ci-argument }})
+    runs-on: ubuntu-latest
+    strategy:
+      # Default is `true`
+      fail-fast: false
+      matrix:
+        ci-argument:
+          - format
+          - clippy
+          - compilecheck
+          - doccheck
+          - doctest
+          - test
+        include:
+          - ci-argument: clippy
+            toolchain-components: clippy
+          - ci-argument: format
+            toolchain-components: rustfmt
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+#          toolchain: nightly
+          components: ${{ matrix.toolchain-components || null }}
+      - name: Cache Cargo build files
+        uses: Leafwing-Studios/cargo-cache@v1.0.0
+#      - name: Install alsa and udev
+#        run: sudo apt-get update; sudo apt-get install --no-install-recommends libasound2-dev libudev-dev libwayland-dev libxkbcommon-dev
+      - name: CI job
+        # See tools/ci/src/main.rs for the commands this runs
+        run: cargo run -p ci -- ${{ matrix.ci-argument }}
