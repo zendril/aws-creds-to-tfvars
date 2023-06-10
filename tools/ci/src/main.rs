@@ -18,7 +18,7 @@ enum Check {
     Format,
     Clippy,
     Test,
-    // DocTest,
+    DocTest,
     DocCheck,
     CompileCheck,
 }
@@ -30,7 +30,7 @@ impl Check {
             Check::Format,
             Check::Clippy,
             Check::Test,
-            // Check::DocTest,
+            Check::DocTest,
             Check::DocCheck,
             Check::CompileCheck,
         ]
@@ -45,7 +45,7 @@ impl Check {
             Check::Format => "format",
             Check::Clippy => "clippy",
             Check::Test => "test",
-            // Check::DocTest => "doctest",
+            Check::DocTest => "doctest",
             Check::DocCheck => "doccheck",
             Check::CompileCheck => "compilecheck",
         }
@@ -57,7 +57,7 @@ impl Check {
             "format" => Some(Check::Format),
             "clippy" => Some(Check::Clippy),
             "test" => Some(Check::Test),
-            // "doctest" => Some(Check::DocTest),
+            "doctest" => Some(Check::DocTest),
             "doccheck" => Some(Check::DocCheck),
             "compilecheck" => Some(Check::CompileCheck),
             _ => None,
@@ -119,12 +119,12 @@ fn main() {
             .expect("Please fix failing tests in output above.");
     }
 
-    // if what_to_run.contains(&Check::DocTest) {
-    //     // Run doc tests
-    //     cmd!(sh, "cargo test --workspace --doc")
-    //         .run()
-    //         .expect("Please fix failing doc-tests in output above.");
-    // }
+    if what_to_run.contains(&Check::DocTest) {
+        // Run doc tests
+        cmd!(sh, "cargo test --workspace --doc")
+            .run()
+            .expect("Please fix failing doc-tests in output above.");
+    }
 
     if what_to_run.contains(&Check::DocCheck) {
         // Check that building docs work and does not emit warnings
