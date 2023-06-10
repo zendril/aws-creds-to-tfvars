@@ -22,12 +22,6 @@ jobs:
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-#        uses: actions-rs/toolchain@v1
-#        with:
-#          profile: minimal
-#          toolchain: stable
-#          override: true
-
       - run: cargo publish -p actfv --token ${CRATES_TOKEN}
         env:
           CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
