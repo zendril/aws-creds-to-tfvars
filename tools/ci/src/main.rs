@@ -6,7 +6,6 @@
 //! - Official CI runs latest stable
 //! - Local runs use whatever the default Rust is locally
 
-// use bevy::utils::HashSet;
 use std::collections::HashSet;
 use std::process;
 
