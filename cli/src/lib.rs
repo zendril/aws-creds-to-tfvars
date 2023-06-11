@@ -10,19 +10,26 @@ pub fn parse_source(
     source_file: &String,
 ) -> Result<HashMap<String, Vec<String>>, Box<dyn std::error::Error>> {
     let file = File::open(source_file)?;
+    // this makes it work fine.. why?
+    // println!("source file {:?}", file);
     let reader = BufReader::new(file);
+    // this makes it work fine.. why?
+    // println!("source reader {:?}", reader);
 
     let mut creds_map: HashMap<String, Vec<String>> = HashMap::new();
 
     let mut section_name = String::new();
     let mut section_lines: Vec<String> = Vec::new();
     for line in reader.lines().flatten() {
+        // println!("line from reader {:?}", line);
         match line {
             line if line.trim().starts_with('[') && line.trim().ends_with(']') => {
+                // println!("Found a section line");
                 let found_section_name = line.trim()[1..line.trim().len() - 1].to_string();
 
                 if section_name != found_section_name {
                     if !section_name.is_empty() {
+                        // println!("inserting {:?} {:?}", section_name, &section_lines);
                         creds_map.insert(section_name, section_lines);
                     }
 
@@ -30,7 +37,10 @@ pub fn parse_source(
                     section_name = found_section_name;
                 }
             }
-            _ => section_lines.push(line),
+            _ => {
+                // println!("Found a line");
+                section_lines.push(line)
+            },
         }
     }
     // when we get to the end of the last section and there is no next section to trigger this add
