@@ -2,8 +2,10 @@ use std::env;
 use std::error::Error;
 use std::path::Path;
 use std::process::exit;
-use notify::{RecommendedWatcher, RecursiveMode, Watcher, Config};
+use std::time::Duration;
 
+use notify::{RecursiveMode, Watcher};
+use notify_debouncer_full::new_debouncer;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
@@ -18,23 +20,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         // TODO replace this when I switch it to clap, and can pass a watcher param in
         if args.len() == 5 {
-            //use watcher
             watch(source_file_path, target_file_path, profile)?;
-            // parse_and_write(source_file_path, target_file_path, profile)?;
         } else {
-            // just run once
-            parse_and_write(source_file_path, target_file_path, profile)?;
+            actfv::parse_and_write(source_file_path, target_file_path, profile)?;
         }
-
     }
-    Ok(())
-}
-
-fn parse_and_write(source_file_path: &String, target_file_path: &String, profile: &String) -> Result<(), Box<dyn Error>> {
-    let source_map = actfv::parse_source(source_file_path).unwrap();
-    println!("{:?}", source_map);
-    let entries = actfv::get_entries_for_profile(source_map, profile)?;
-    actfv::write_target(entries, target_file_path)?;
     Ok(())
 }
 
@@ -42,20 +32,22 @@ fn parse_and_write(source_file_path: &String, target_file_path: &String, profile
 fn watch(source_file_path: &String, target_file_path: &String, profile: &String) -> Result<(), Box<dyn Error>> {
     let (tx, rx) = std::sync::mpsc::channel();
 
-    // Automatically select the best implementation for your platform.
-    // You can also access each implementation directly e.g. INotifyWatcher.
-    let mut watcher = RecommendedWatcher::new(tx, Config::default())?;
+    let mut debouncer = new_debouncer(Duration::from_secs(2), None, tx)?;
 
-    // Add a path to be watched. All files and directories at that path and
-    // below will be monitored for changes.
-    watcher.watch(source_file_path.as_ref(), RecursiveMode::NonRecursive)?;
+    debouncer
+        .watcher()
+        .watch(source_file_path.as_ref(), RecursiveMode::NonRecursive)?;
+
+    debouncer
+        .cache()
+        .add_root(<String as AsRef<Path>>::as_ref(source_file_path), RecursiveMode::NonRecursive);
 
     for res in rx {
         match res {
-            Ok(event) => {
-                println!("changed: {:?}", event);
-                parse_and_write(source_file_path, target_file_path, profile)?;
-            },
+            Ok(_) => {
+                println!("Source file changed, updating target file.");
+                actfv::parse_and_write(source_file_path, target_file_path, profile)?;
+            }
             Err(e) => println!("watch error: {:?}", e),
         }
     }

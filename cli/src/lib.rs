@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::error::Error;
 
 pub fn show_usage() {
     eprintln!("Usage: actfv <aws_credentials_file> <output_tfvars_file> <profile>");
@@ -10,11 +11,7 @@ pub fn parse_source(
     source_file: &String,
 ) -> Result<HashMap<String, Vec<String>>, Box<dyn std::error::Error>> {
     let file = File::open(source_file)?;
-    // this makes it work fine.. why?
-    // println!("source file {:?}", file);
     let reader = BufReader::new(file);
-    // this makes it work fine.. why?
-    // println!("source reader {:?}", reader);
 
     let mut creds_map: HashMap<String, Vec<String>> = HashMap::new();
 
@@ -80,5 +77,12 @@ pub fn write_target(
     }
     writer.write_all(&w[..])?;
 
+    Ok(())
+}
+
+pub fn parse_and_write(source_file_path: &String, target_file_path: &String, profile: &String) -> Result<(), Box<dyn Error>> {
+    let source_map = parse_source(source_file_path).unwrap();
+    let entries = get_entries_for_profile(source_map, profile)?;
+    write_target(entries, target_file_path)?;
     Ok(())
 }
