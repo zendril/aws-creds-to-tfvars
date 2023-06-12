@@ -18,15 +18,12 @@ pub fn parse_source(
     let mut section_name = String::new();
     let mut section_lines: Vec<String> = Vec::new();
     for line in reader.lines().flatten() {
-        // println!("line from reader {:?}", line);
         match line {
             line if line.trim().starts_with('[') && line.trim().ends_with(']') => {
-                // println!("Found a section line");
                 let found_section_name = line.trim()[1..line.trim().len() - 1].to_string();
 
                 if section_name != found_section_name {
                     if !section_name.is_empty() {
-                        // println!("inserting {:?} {:?}", section_name, &section_lines);
                         creds_map.insert(section_name, section_lines);
                     }
 
@@ -35,7 +32,6 @@ pub fn parse_source(
                 }
             }
             _ => {
-                // println!("Found a line");
                 section_lines.push(line)
             },
         }
