@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
 
@@ -70,5 +71,16 @@ pub fn write_target(
     }
     writer.write_all(&w[..])?;
 
+    Ok(())
+}
+
+pub fn parse_and_write(
+    source_file_path: &String,
+    target_file_path: &String,
+    profile: &String,
+) -> Result<(), Box<dyn Error>> {
+    let source_map = parse_source(source_file_path).unwrap();
+    let entries = get_entries_for_profile(source_map, profile)?;
+    write_target(entries, target_file_path)?;
     Ok(())
 }
