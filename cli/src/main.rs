@@ -18,7 +18,7 @@ struct Args {
     #[arg()]
     target_file_path: String,
 
-    /// Watch the source file constantly for changes
+    /// Specify the specific profile in the aws credentials file to load
     #[arg(short, long, default_value = "default")]
     profile: String,
 

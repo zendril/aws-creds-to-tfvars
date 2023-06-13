@@ -19,8 +19,16 @@ It will find and print out the following:
 
 ## Usage
 
-`actfv <aws_credentials_file> <output_tfvars_file> <profile>`
+```
+Usage: actfv.exe [OPTIONS] <SOURCE_FILE_PATH> <TARGET_FILE_PATH>
 
-- aws_credentials_file - Typically found in `~/.aws/credentials`
-- output_tfvars_file - The file to be written out. Ex: `secrets.tfvars`
-- profile - Many times this is just `default`, but work scenarios may often include `adfs`
+Arguments:
+  <SOURCE_FILE_PATH>  Source aws credentials file. Ex: ~/.aws/credentials
+  <TARGET_FILE_PATH>  Target file. Ex: mysecret.tfvars
+
+Options:
+  -p, --profile <PROFILE>  Watch the source file constantly for changes [default: default]
+  -w, --watch              Watch the source file constantly for changes
+  -h, --help               Print help
+  -V, --version            Print version
+```
