@@ -1,7 +1,7 @@
 use std::collections::HashMap;
+use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
-use std::error::Error;
 
 pub fn show_usage() {
     eprintln!("Usage: actfv <aws_credentials_file> <output_tfvars_file> <profile>");
@@ -31,9 +31,7 @@ pub fn parse_source(
                     section_name = found_section_name;
                 }
             }
-            _ => {
-                section_lines.push(line)
-            },
+            _ => section_lines.push(line),
         }
     }
     // when we get to the end of the last section and there is no next section to trigger this add
@@ -76,7 +74,11 @@ pub fn write_target(
     Ok(())
 }
 
-pub fn parse_and_write(source_file_path: &String, target_file_path: &String, profile: &String) -> Result<(), Box<dyn Error>> {
+pub fn parse_and_write(
+    source_file_path: &String,
+    target_file_path: &String,
+    profile: &String,
+) -> Result<(), Box<dyn Error>> {
     let source_map = parse_source(source_file_path).unwrap();
     let entries = get_entries_for_profile(source_map, profile)?;
     write_target(entries, target_file_path)?;

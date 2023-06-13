@@ -28,8 +28,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-
-fn watch(source_file_path: &String, target_file_path: &String, profile: &String) -> Result<(), Box<dyn Error>> {
+fn watch(
+    source_file_path: &String,
+    target_file_path: &String,
+    profile: &String,
+) -> Result<(), Box<dyn Error>> {
     let (tx, rx) = std::sync::mpsc::channel();
 
     let mut debouncer = new_debouncer(Duration::from_secs(2), None, tx)?;
@@ -38,9 +41,10 @@ fn watch(source_file_path: &String, target_file_path: &String, profile: &String)
         .watcher()
         .watch(source_file_path.as_ref(), RecursiveMode::NonRecursive)?;
 
-    debouncer
-        .cache()
-        .add_root(<String as AsRef<Path>>::as_ref(source_file_path), RecursiveMode::NonRecursive);
+    debouncer.cache().add_root(
+        <String as AsRef<Path>>::as_ref(source_file_path),
+        RecursiveMode::NonRecursive,
+    );
 
     for res in rx {
         match res {
