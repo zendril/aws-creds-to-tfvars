@@ -3,10 +3,6 @@ use std::error::Error;
 use std::fs::File;
 use std::io::{BufRead, BufReader, BufWriter, Write};
 
-pub fn show_usage() {
-    eprintln!("Usage: actfv <aws_credentials_file> <output_tfvars_file> <profile>");
-}
-
 pub fn parse_source(
     source_file: &String,
 ) -> Result<HashMap<String, Vec<String>>, Box<dyn std::error::Error>> {
