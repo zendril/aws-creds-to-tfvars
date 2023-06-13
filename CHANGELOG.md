@@ -1,3 +1,7 @@
+## 0.2.0
+- Added a `watch` command that will continuously watch the source file and write changes to the target file
+- Implemented more robust cli parsing
+
 ## 0.1.2
 - Adding link to GH source
 

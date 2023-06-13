@@ -1,30 +1,49 @@
-use std::env;
 use std::error::Error;
 use std::path::Path;
-use std::process::exit;
 use std::time::Duration;
+
+use clap::Parser;
 
 use notify::{RecursiveMode, Watcher};
 use notify_debouncer_full::new_debouncer;
 
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// Source aws credentials file. Ex: ~/.aws/credentials
+    #[arg()]
+    source_file_path: String,
+
+    /// Target file. Ex: mysecret.tfvars
+    #[arg()]
+    target_file_path: String,
+
+    /// Specify the specific profile in the aws credentials file to load
+    #[arg(short, long, default_value = "default")]
+    profile: String,
+
+    /// Watch the source file constantly for changes
+    #[arg(short, long, default_value_t = false)]
+    watch: bool,
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args: Vec<String> = env::args().collect();
+    let args = Args::parse();
 
-    if args.len() < 4 {
-        actfv::show_usage();
-        exit(1);
+    if args.watch {
+        watch(
+            &args.source_file_path,
+            &args.target_file_path,
+            &args.profile,
+        )?;
     } else {
-        let source_file_path = &args[1];
-        let target_file_path = &args[2];
-        let profile = &args[3];
-
-        // TODO replace this when I switch it to clap, and can pass a watcher param in
-        if args.len() == 5 {
-            watch(source_file_path, target_file_path, profile)?;
-        } else {
-            actfv::parse_and_write(source_file_path, target_file_path, profile)?;
-        }
+        actfv::parse_and_write(
+            &args.source_file_path,
+            &args.target_file_path,
+            &args.profile,
+        )?;
     }
+
     Ok(())
 }
 
