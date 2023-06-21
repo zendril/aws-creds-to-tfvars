@@ -30,10 +30,10 @@ fn valid_input_with_region_name_override_valid_output() -> TestResult {
         "--profile",
         "adfs",
         "--region-name-override",
-        "aws_region"
+        "aws_region",
     ])
-        .assert()
-        .success();
+    .assert()
+    .success();
     assert!(diff(
         "../target/output_region_name_override.tfvars",
         "tests/resources/valid_region_name_override.tfvars"

@@ -49,7 +49,7 @@ pub fn get_entries_for_profile(
 pub fn write_target(
     entries: Vec<String>,
     target_file_path: &String,
-    region_name_override: &String
+    region_name_override: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let file = File::create(target_file_path)?;
     let mut writer = BufWriter::new(file);
@@ -78,7 +78,7 @@ pub fn parse_and_write(
     source_file_path: &String,
     target_file_path: &String,
     profile: &String,
-    region_name_override: &String
+    region_name_override: &str,
 ) -> Result<(), Box<dyn Error>> {
     let source_map = parse_source(source_file_path).unwrap();
     let entries = get_entries_for_profile(source_map, profile)?;

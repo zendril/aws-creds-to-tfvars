@@ -57,7 +57,7 @@ fn watch(
     source_file_path: &String,
     target_file_path: &String,
     profile: &String,
-    region_name_override: &String
+    region_name_override: &str,
 ) -> Result<(), Box<dyn Error>> {
     let (tx, rx) = std::sync::mpsc::channel();
 
@@ -76,7 +76,12 @@ fn watch(
         match res {
             Ok(_) => {
                 println!("Source file changed, updating target file.");
-                actfv::parse_and_write(source_file_path, target_file_path, profile, region_name_override)?;
+                actfv::parse_and_write(
+                    source_file_path,
+                    target_file_path,
+                    profile,
+                    region_name_override,
+                )?;
             }
             Err(e) => println!("watch error: {:?}", e),
         }
