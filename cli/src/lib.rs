@@ -49,6 +49,7 @@ pub fn get_entries_for_profile(
 pub fn write_target(
     entries: Vec<String>,
     target_file_path: &String,
+    region_output_name: &String
 ) -> Result<(), Box<dyn std::error::Error>> {
     let file = File::create(target_file_path)?;
     let mut writer = BufWriter::new(file);
@@ -58,8 +59,11 @@ pub fn write_target(
     for entry in entries {
         if let Some((k, v)) = entry.split_once('=') {
             match k.trim() {
-                "region" | "aws_access_key_id" | "aws_secret_access_key" | "aws_session_token" => {
-                    writeln!(&mut w, "{} = \"{}\"", k, v.trim())?;
+                "aws_access_key_id" | "aws_secret_access_key" | "aws_session_token" => {
+                    writeln!(&mut w, "{} = \"{}\"", k.trim(), v.trim())?;
+                }
+                "region" => {
+                    writeln!(&mut w, "{} = \"{}\"", region_output_name.trim(), v.trim())?;
                 }
                 _ => (),
             }
@@ -74,9 +78,10 @@ pub fn parse_and_write(
     source_file_path: &String,
     target_file_path: &String,
     profile: &String,
+    region_output_name: &String
 ) -> Result<(), Box<dyn Error>> {
     let source_map = parse_source(source_file_path).unwrap();
     let entries = get_entries_for_profile(source_map, profile)?;
-    write_target(entries, target_file_path)?;
+    write_target(entries, target_file_path, region_output_name)?;
     Ok(())
 }
