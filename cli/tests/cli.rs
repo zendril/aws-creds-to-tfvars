@@ -22,6 +22,26 @@ fn valid_input_valid_output() -> TestResult {
 }
 
 #[test]
+fn valid_input_with_region_name_override_valid_output() -> TestResult {
+    let mut cmd = Command::cargo_bin("actfv").unwrap();
+    cmd.args(vec![
+        "tests/resources/sample-aws-credentials",
+        "../target/output_region_name_override.tfvars",
+        "--profile",
+        "adfs",
+        "--region-name-override",
+        "aws_region",
+    ])
+    .assert()
+    .success();
+    assert!(diff(
+        "../target/output_region_name_override.tfvars",
+        "tests/resources/valid_region_name_override.tfvars"
+    ));
+    Ok(())
+}
+
+#[test]
 fn shows_usage() {
     let mut cmd = Command::cargo_bin("actfv").unwrap();
     cmd.assert().failure();
