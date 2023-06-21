@@ -8,8 +8,8 @@ on:
 name: Publish
 
 jobs:
-  ci:
-    uses: ./.github/workflows/ci.yml
+#  ci:
+#    uses: ./.github/workflows/ci.yml
 #  publish-crate:
 #    name: Publish
 #    needs: [CI]
@@ -39,7 +39,7 @@ jobs:
           toolchain: stable
 
       - name: Build
-        run: cargo build --all --release && strip target/release/PROJECT_NAME && mv target/release/PROJECT_NAME target/release/PROJECT_NAME_amd64
+        run: cargo build --all --release && strip target/release/actfv && mv target/release/actfv target/release/actfv_amd64
 
 #      - run: cargo publish -p actfv --token ${CRATES_TOKEN}
 #        env:
@@ -50,6 +50,6 @@ jobs:
 #        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            target/release/PROJECT_NAME_amd64
+            target/release/actfv_amd64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
