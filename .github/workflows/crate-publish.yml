@@ -28,6 +28,8 @@ jobs:
   publish-release-linux:
     name: Publish Release Linux
 #    needs: [CI]
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
