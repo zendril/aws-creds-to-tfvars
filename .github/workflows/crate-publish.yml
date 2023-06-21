@@ -51,5 +51,5 @@ jobs:
         with:
           files: |
             target/release/actfv_amd64
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
