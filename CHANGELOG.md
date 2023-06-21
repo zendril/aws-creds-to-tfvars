@@ -1,3 +1,7 @@
+## 0.3.0
+- Added a `region-name-override` to specify what region is called in the output file
+- Linux, Win & Mac releases are now published to github releases
+
 ## 0.2.0
 - Added a `watch` command that will continuously watch the source file and write changes to the target file
 - Implemented more robust cli parsing

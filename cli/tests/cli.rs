@@ -29,7 +29,7 @@ fn valid_input_with_region_name_override_valid_output() -> TestResult {
         "../target/output_region_name_override.tfvars",
         "--profile",
         "adfs",
-        "--region-output-name",
+        "--region-name-override",
         "aws_region"
     ])
         .assert()

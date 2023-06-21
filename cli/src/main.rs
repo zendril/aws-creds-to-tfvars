@@ -24,7 +24,7 @@ struct Args {
 
     /// Specify the name for region in the output file. Ex: aws_region
     #[arg(short, long, default_value = "region")]
-    region_output_name: String,
+    region_name_override: String,
 
     /// Watch the source file constantly for changes
     #[arg(short, long, default_value_t = false)]
@@ -39,14 +39,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &args.source_file_path,
             &args.target_file_path,
             &args.profile,
-            &args.region_output_name,
+            &args.region_name_override,
         )?;
     } else {
         actfv::parse_and_write(
             &args.source_file_path,
             &args.target_file_path,
             &args.profile,
-            &args.region_output_name,
+            &args.region_name_override,
         )?;
     }
 
@@ -57,7 +57,7 @@ fn watch(
     source_file_path: &String,
     target_file_path: &String,
     profile: &String,
-    region_output_name: &String
+    region_name_override: &String
 ) -> Result<(), Box<dyn Error>> {
     let (tx, rx) = std::sync::mpsc::channel();
 
@@ -76,7 +76,7 @@ fn watch(
         match res {
             Ok(_) => {
                 println!("Source file changed, updating target file.");
-                actfv::parse_and_write(source_file_path, target_file_path, profile, region_output_name)?;
+                actfv::parse_and_write(source_file_path, target_file_path, profile, region_name_override)?;
             }
             Err(e) => println!("watch error: {:?}", e),
         }
